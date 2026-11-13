@@ -33,5 +33,19 @@ namespace ChurnGuard_Client.Services
                 return new List<ModelMetric>();
             }
         }
+        public async Task<List<ModelMetric>> TestImprovement(TestFigure figure)
+        {
+            try
+            {
+                var response = await client.PostAsJsonAsync("/api/model-improvement", figure);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<List<ModelMetric>>()?? new();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<ModelMetric>();
+            }
+        }
     }
 }

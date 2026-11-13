@@ -25,6 +25,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <!-- 8번 행: 남은 세로 공간을 모두 차지 -->
         </Grid.RowDefinitions>
@@ -37,28 +38,31 @@
 
         <!-- 각 모델별 하이퍼파라미터 선택 영역 -->
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Logistic Regression / C :" VerticalAlignment="Center" Margin="0,5"/>
-        <ComboBox Grid.Row="0" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding modelTypes}" SelectedItem="{Binding Model}"/>
+        <ComboBox Grid.Row="0" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding logistic}" SelectedItem="{Binding testFigure.logistic}"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="SGDClassifier / alpha :" VerticalAlignment="Center" Margin="0,5"/>
-        <ComboBox Grid.Row="1" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding modelTypes}" SelectedItem="{Binding Model}"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding SGD_alpha}" SelectedItem="{Binding testFigure.SGD_alpha}"/>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Decision Tree / max_depth:" VerticalAlignment="Center" Margin="0,5"/>
-        <ComboBox Grid.Row="2" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding modelTypes}" SelectedItem="{Binding Model}"/>
+        <ComboBox Grid.Row="2" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding dt_depth}" SelectedItem="{Binding testFigure.dt_depth}"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Random Forest / n_estimators:" VerticalAlignment="Center" Margin="0,5"/>
-        <ComboBox Grid.Row="3" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding modelTypes}" SelectedItem="{Binding Model}"/>
+        <ComboBox Grid.Row="3" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding rf_n_estimators}" SelectedItem="{Binding testFigure.rf_n_estimators}"/>
 
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Gradient Boosting / learning_rate:" VerticalAlignment="Center" Margin="0,5"/>
-        <ComboBox Grid.Row="4" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding modelTypes}" SelectedItem="{Binding Model}"/>
+        <ComboBox Grid.Row="4" Grid.Column="1" Width="120" Height="30" ItemsSource="{Binding gb_learning_rate}" SelectedItem="{Binding testFigure.gb_learning_rate}"/>
 
         <!-- 요청 버튼 (Grid.ColumnSpan="2"로 0번, 1번 컬럼을 합쳐 가로 전체 사용) -->
         <Button Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" 
                 Content="기본 모델별 성능 비교" Height="38" Margin="0,15,0,10"
                 Command="{Binding PredictCommand}" FontWeight="Bold" Cursor="Hand"/>
+        <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" 
+                Content="모델 성능 개선 실험" Height="38" Margin="0,15,0,10"
+                Command="{Binding PredictCommand}" FontWeight="Bold" Cursor="Hand"/>
 
         <!-- 결과 표시 영역 (DataGrid) -->
         <!-- [핵심 수정] Grid.Column="0" Grid.ColumnSpan="2" 를 지정하여 220px 컬럼 제한을 무시하고 가로 전체 영역을 쓰도록 설정 -->
-        <DataGrid Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"
+        <DataGrid Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2"
                   ItemsSource="{Binding PerformanceResults}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
