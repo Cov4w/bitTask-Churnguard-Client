@@ -39,19 +39,32 @@ namespace ChurnGuard_Client.ViewModels
         public ObservableCollection<ModelMetric> PerformanceResults { get; set; } = new();
         public ICommand PredictCommand { get; }
         public ICommand ImprovementModel { get; }
+        public ICommand FinalReportCommand { get; }
 
         public MainViewModel()
         {
             PredictCommand = new RelayCommand(async _ => await getBasicScore());
             ImprovementModel = new RelayCommand(async _ => await getImprovementScore());
+            FinalReportCommand = new RelayCommand(async _ => await getFinalReport());
         }
 
+        private string reportText = string.Empty;
+        public string ReportText
+        {
+            get => reportText;
+            set
+            {
+                reportText = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ReportText)));
+            }
+        }
         private async Task getBasicScore()
         {
             try
             {
                 MessageBox.Show("모델별 성능 비교 결과를 요청합니다..");
                 var response = await api.LoadBasicPerformance();
+                
                 if (response !=null)
                 {
                     PerformanceResults.Clear();
@@ -73,6 +86,7 @@ namespace ChurnGuard_Client.ViewModels
             {
                 MessageBox.Show("입력된 수치의 테스트 결과를 요청합니다..");
                 var response = await api.TestImprovement(testFigure);
+                
                 PerformanceResults.Clear();
                 foreach(var item in response)
                 {
@@ -80,6 +94,34 @@ namespace ChurnGuard_Client.ViewModels
                 }
             }
             catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private async Task getFinalReport()
+        {
+            try
+            {
+                MessageBox.Show("GridSearchCV 탐색 및 최종 모델 선정 보고서를 요청합니다..\n(교차 검증 수행으로 몇 초 정도 소요될 수 있습니다)");
+
+                var response = await api.LoadFinalReport();
+
+                if (response != null && response.AllGridResults != null)
+                {
+                    // [핵심] 기존 DataGrid의 데이터를 비우고 GridSearchCV 최적 결과 5개를 추가
+                    PerformanceResults.Clear();
+                    foreach (var item in response.AllGridResults)
+                    {
+                        PerformanceResults.Add(item);
+                    }
+
+                    // 줄글로 된 최종 선정 보고서 출력 (메시지 박스 및 프로퍼티 업데이트)
+                    ReportText = response.SummaryReport;
+                    MessageBox.Show(response.SummaryReport, "최종 모델 선정 보고서");
+                }
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
